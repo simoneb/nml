@@ -1,22 +1,27 @@
 <ion-header>
   <ion-navbar>
-    <button menuToggle *ngIf="!selectedItem">
+    <button menuToggle *ngIf="!album">
       <ion-icon name="menu"></ion-icon>
     </button>
-    <ion-title *ngIf="selectedAlbum">{{selectedAlbum.title}}</ion-title>
+    <ion-title *ngIf="album">{{album.title}}</ion-title>
   </ion-navbar>
 </ion-header>
 
 <ion-content>
-  <div *ngIf="selectedAlbum" class="selection">
-    <b>{{selectedAlbum.title}}</b>
-    <ion-list>
-      <button ion-item *ngFor="let track of selectedAlbum.tracks">
+  <div *ngIf="album" class="selection">
+    <b>{{album.title}}</b>
+    <img *ngIf="albumImageUrl" [src]="albumImageUrl" />
+    <ion-item-group *ngFor="let group of trackGroups">
+      <ion-item-divider light>{{group[0]}}</ion-item-divider>
+      <button ion-item
+              [class.playing]="track === currentlyPlaying"
+              *ngFor="let track of group[1]"
+              (click)="play(track)">
         {{track.track}} - {{track.title}}
         <div class="item-note" item-right>
-          {{track.category}} / {{track.genre}}
+          {{track.duration}}
         </div>
       </button>
-    </ion-list>
+    </ion-item-group>
   </div>
 </ion-content>

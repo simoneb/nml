@@ -1,5 +1,7 @@
 {
-  "dependencies": {},
+  "dependencies": {
+    "lodash": "registry:npm/lodash#4.0.0+20160723033700"
+  },
   "devDependencies": {},
   "globalDependencies": {
     "crypto-js": "registry:dt/crypto-js#3.1.4+20160708041433",

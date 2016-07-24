@@ -1,0 +1,8 @@
+<ion-list>
+  <button ion-item *ngFor="let album of albums | async" (click)="selectAlbum(album)">
+    <ion-thumbnail item-left>
+      <img [src]="getAlbumThumbnailUrl(album)">
+    </ion-thumbnail>
+    <h2>{{album.title}}</h2>
+  </button>
+</ion-list>

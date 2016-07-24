@@ -1,31 +1,54 @@
-import {Injectable}     from '@angular/core';
-import {Http, Response, Headers, RequestOptions, URLSearchParams} from '@angular/http';
-import {Observable}     from 'rxjs/Observable';
+import {Injectable}     from '@angular/core'
+import {Http, Response, Headers, RequestOptions, URLSearchParams} from '@angular/http'
+import {Observable}     from 'rxjs/Observable'
 import {AuthService} from './auth.service'
 import {HmacSHA1, enc} from 'crypto-js'
-import {Albums, Album} from '../models/nml'
+import {Albums, Album, Resource} from '../models/nml'
+
+function toJson(res: Response) {
+  return res.json()
+}
+
+function handleError(error: any) {
+  // In a real world app, we might use a remote logging infrastructure
+  // We'd also dig deeper into the error to get a better message
+  let errMsg = (error.message) ? error.message :
+    error.status ? `${error.status} - ${error.statusText}` : 'Server error'
+  console.error(errMsg) // log to console instead
+  return Observable.throw(errMsg)
+}
 
 @Injectable()
 export class NmlService {
-  private baseUrl = 'https://api.naxosmusiclibrary.com';  // URL to web API
+  private baseUrl = 'https://api.naxosmusiclibrary.com'
 
   constructor(private http: Http, private authService: AuthService) {
   }
 
-  login(username, password): Observable<Object> {
+  login(username, password): Observable<any> {
     let headers = new Headers({
       'Accept': 'application/json',
       'Content-Type': 'application/x-www-form-urlencoded'
-    });
-    let options = new RequestOptions({headers: headers});
+    })
+    let options = new RequestOptions({headers: headers})
 
     return this.http
       .post(this.baseUrl + '/Auth/Login', `username=${username}&password=${password}`, options)
-      .map(this.storeCredentials)
-      .catch(this.handleError);
+      .map(toJson)
+      .map(credentials => this.authService.storeCredentials(credentials))
+      .catch(handleError)
   }
 
-  albums(args: Object): Observable<Albums> {
+  logout(): Observable<any> {
+    let resource = '/Auth/Logout'
+
+    return this.http
+      .get(this.baseUrl + resource, this.sign(resource))
+      .map(toJson)
+      .catch(handleError)
+  }
+
+  albums(args = {}): Observable<Albums> {
     let resource = '/Album/'
     let headers = new Headers({'Accept': 'application/json'})
     let search = new URLSearchParams()
@@ -36,60 +59,75 @@ export class NmlService {
 
     let options = new RequestOptions({headers, search})
 
-    this.sign(options, resource)
-
     return this.http
-      .get(this.baseUrl + resource, options)
-      .map(this.mapResponse)
-      .catch(this.handleError)
+      .get(this.baseUrl + resource, this.sign(resource, options))
+      .map(toJson)
+      .catch(handleError)
   }
 
-  private sign(options: RequestOptions, resource: string, method: string = 'GET') {
-    let expires = Math.round(new Date().getTime() / 1000) + (2 * 60 * 60 * 1000)
-    let credentials = this.authService.getCredentials()
-    let signature = this.generateSignature(credentials.secretkey, method, expires, resource)
+  search(term: string, args = {P: 1, PP: 20}): Observable<Albums> {
+    let resource = `/Search/Album/${term}`
+    let headers = new Headers({'Accept': 'application/json'})
+    let search = new URLSearchParams()
 
-    if (!options.search) options.search = new URLSearchParams()
+    for (let key in args) {
+      search.append(key, args[key])
+    }
 
-    options.search.append('NXSAccessKeyID', credentials.accesskey)
-    options.search.append('Expires', expires.toString())
-    options.search.append('Signature', signature)
+    let options = new RequestOptions({headers, search})
+
+    return this.http
+      .get(this.baseUrl + resource, this.sign(resource, options))
+      .map(toJson)
+      .catch(handleError)
   }
 
   album(id: number): Observable<Album> {
     let resource = `/Album/${id}`
     let headers = new Headers({'Accept': 'application/json'})
     let options = new RequestOptions({headers})
-    this.sign(options, resource)
+    this.sign(resource, options)
 
     return this.http
       .get(this.baseUrl + resource, options)
-      .map(this.mapResponse)
-      .catch(this.handleError)
+      .map(toJson)
+      .catch(handleError)
   }
 
-  generateSignature(secretKey, method, expires, resource) {
+  signResourceUrl(resource: Resource, args = {}): string {
+    const {resource: resourceUrl} = resource
+    let search = new URLSearchParams()
+
+    for (let key in args) {
+      search.append(key, args[key])
+    }
+
+    let options = new RequestOptions({search})
+
+    this.sign(resourceUrl, options)
+
+    return `${this.baseUrl}${resourceUrl}?${options.search}`
+  }
+
+  private sign(resource: string, options = new RequestOptions(), method = 'GET'): RequestOptions {
+    let expires = Math.round(new Date().getTime() / 1000) + (2 * 60 * 60 * 1000)
+    let credentials = this.authService.getCredentials()
+
+    let signature = NmlService.generateSignature(credentials.secretkey, method, expires, resource)
+
+    if (!options.search) options.search = new URLSearchParams()
+
+    options.search.append('NXSAccessKeyID', credentials.accesskey)
+    options.search.append('Expires', expires.toString())
+    options.search.append('Signature', signature)
+
+    return options
+  }
+
+  private static generateSignature(secretKey, method, expires, resource) {
     // see http://docs.aws.amazon.com/AmazonS3/latest/dev/RESTAuthentication.html
     const stringToSign = `${method}\n\n\n${expires}\n${resource}`
+
     return enc.Base64.stringify(HmacSHA1(stringToSign, secretKey))
-  }
-
-  private mapResponse(res: Response) {
-    return res.json();
-  }
-
-  private storeCredentials(res: Response) {
-    const credentials = res.json();
-    this.authService.storeCredentials(credentials)
-    return credentials;
-  }
-
-  private handleError(error: any) {
-    // In a real world app, we might use a remote logging infrastructure
-    // We'd also dig deeper into the error to get a better message
-    let errMsg = (error.message) ? error.message :
-      error.status ? `${error.status} - ${error.statusText}` : 'Server error';
-    console.error(errMsg); // log to console instead
-    return Observable.throw(errMsg);
   }
 }
