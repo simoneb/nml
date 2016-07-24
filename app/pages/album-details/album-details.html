@@ -1,0 +1,22 @@
+<ion-header>
+  <ion-navbar>
+    <button menuToggle *ngIf="!selectedItem">
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title *ngIf="selectedAlbum">{{selectedAlbum.title}}</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <div *ngIf="selectedAlbum" class="selection">
+    <b>{{selectedAlbum.title}}</b>
+    <ion-list>
+      <button ion-item *ngFor="let track of selectedAlbum.tracks">
+        {{track.track}} - {{track.title}}
+        <div class="item-note" item-right>
+          {{track.category}} / {{track.genre}}
+        </div>
+      </button>
+    </ion-list>
+  </div>
+</ion-content>

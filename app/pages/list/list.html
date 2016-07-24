@@ -1,0 +1,19 @@
+<ion-header>
+  <ion-navbar>
+    <button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>Recent additions</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <button ion-item *ngFor="let album of albums" (click)="goToAlbum($event, album)">
+      {{album.title}}
+      <div class="item-note" item-right>
+        {{album.title}}
+      </div>
+    </button>
+  </ion-list>
+</ion-content>
