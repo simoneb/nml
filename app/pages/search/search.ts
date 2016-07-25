@@ -13,15 +13,14 @@ import {Observable} from "rxjs";
 })
 export class SearchPage {
   albums: Observable<Array<Album>>
-  term: string
 
   constructor(private navCtrl: NavController, private nmlService: NmlService) {
-    this.term = ''
   }
 
-  private search() {
-    this.albums = this.nmlService.search(this.term)
-      .map(albums => albums.tracklists)
+  private search({target: {value}}) {
+    if (!value || !value.trim()) return
+
+    this.albums = this.nmlService.search(value).map(albums => albums.tracklists)
   }
 
   goToAlbum(album: Album) {

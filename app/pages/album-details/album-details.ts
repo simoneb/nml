@@ -34,7 +34,10 @@ export class AlbumDetailsPage implements OnInit, OnDestroy {
   }
 
   play(track: Track) {
+    const wasPlaying = this.currentlyPlaying
     this.stop()
+
+    if(wasPlaying === track) return
 
     this.audio = new Audio(this.nmlService.signResourceUrl(track.audio))
     this.audio.play()

@@ -6,7 +6,7 @@
 
   <ion-content>
     <ion-list>
-      <button ion-item *ngFor="let page of pages" (click)="openPage(page)">
+      <button ion-item [class.playing]="isActive(page.component)" *ngFor="let page of pages" (click)="openPage(page)">
         {{page.title}}
       </button>
     </ion-list>

@@ -45,6 +45,12 @@ class MyApp implements AfterViewInit {
     this.menu.close()
     this.nav.setRoot(page.component)
   }
+
+  isActive(pageType) {
+    if(!this.nav.getActive()) return false
+    const {componentType} = this.nav.getActive()
+    return componentType === pageType
+  }
 }
 
 let prodMode = window.hasOwnProperty('cordova');

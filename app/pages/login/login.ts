@@ -16,12 +16,11 @@ export class LoginPage {
   }
 
   login(event) {
-    this.nmlService.login(this.auth.name, this.auth.password)
-      .subscribe(
-        () => this.navCtrl.push(ListPage),
-        err => {
-          throw err;
-        }
-      );
+    console.log('logging in')
+    this.nmlService
+      .login(this.auth.name, this.auth.password)
+      .subscribe(() => this.navCtrl.setRoot(ListPage), err => {
+        throw err
+      })
   }
 }

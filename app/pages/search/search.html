@@ -1,15 +1,12 @@
 <ion-header>
-  <ion-navbar>
+  <ion-toolbar primary>
     <button menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
-    <ion-title>Search</ion-title>
-  </ion-navbar>
+    <ion-searchbar autocomplete="on" (ionInput)="search($event)"></ion-searchbar>
+  </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <ion-label fixed>Search</ion-label>
-  <ion-input [(ngModel)]="term"></ion-input>
-  <button (click)="search()">Search</button>
   <album-list [albums]="albums" (onAlbumSelected)="goToAlbum($event)"></album-list>
 </ion-content>
