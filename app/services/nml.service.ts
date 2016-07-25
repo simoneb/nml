@@ -43,7 +43,6 @@ export class NmlService {
       .get(this.baseUrl + resource, this.sign(resource, options))
       .map(toJson)
       .map(credentials => this.authService.storeCredentials(credentials))
-      .map(() => window.location.reload())
       .catch(this.handleError)
   }
 
@@ -65,7 +64,6 @@ export class NmlService {
 
     return this.http
       .get(this.baseUrl + resource, this.sign(resource, options))
-      .catch(this.handleUnauthorized)
       .map(toJson)
       .catch(this.handleError)
   }
@@ -146,13 +144,5 @@ export class NmlService {
       error.status ? `${error.status} - ${error.statusText}` : 'Server error'
     console.error(errMsg) // log to console instead
     return Observable.throw(errMsg)
-  }
-
-  handleUnauthorized = (res: Response) => {
-    if (res.status === 401) {
-      return this.extendAuth()
-    }
-
-    return Observable.throw(res)
   }
 }

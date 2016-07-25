@@ -34,17 +34,61 @@ export class AlbumDetailsPage implements OnInit, OnDestroy {
   }
 
   play(track: Track) {
-    const wasPlaying = this.currentlyPlaying
-    this.stop()
+    const runningTrack = this.currentlyPlaying
 
-    if(wasPlaying === track) return
+    if (runningTrack) this.stop()
+    if (runningTrack === track) return
 
+    this._play(track)
+  }
+
+  private _play(track: Track) {
     this.audio = new Audio(this.nmlService.signResourceUrl(track.audio))
+    this.audio.addEventListener('ended', this.onAudioEnd.bind(this))
+
+    // see https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Media_events
+    // see https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement
+    const events = [
+      'abort',
+      'canplay',
+      'canplaythrough',
+      'durationchange',
+      'emptied',
+      'ended',
+      'error',
+      'loadeddata',
+      'loadedmetadata',
+      'loadstart',
+      'pause',
+      'play',
+      'playing',
+      'progress',
+      'ratechange',
+      'seeked',
+      'seeking',
+      'stalled',
+      'suspend',
+      'timeupdate',
+      'volumechange',
+      'waiting'
+    ]
+    events.forEach(name => this.audio.addEventListener(name, console.log.bind(console, name)))
+
     this.audio.play()
     this.currentlyPlaying = track
   }
 
-  stop() {
+  private onAudioEnd() {
+    const {tracks} = this.album
+    const trackIndex = tracks.indexOf(this.currentlyPlaying)
+    this.currentlyPlaying = null
+
+    if (trackIndex < tracks.length - 1) {
+      this.play(tracks[trackIndex + 1])
+    }
+  }
+
+  private stop() {
     if (this.audio) this.audio.pause()
     this.currentlyPlaying = null
   }

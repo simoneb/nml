@@ -8,13 +8,19 @@ import {HTTP_PROVIDERS} from '@angular/http'
 import './rxjs-operators'
 import {AuthService} from './services/auth.service'
 import {SearchPage} from "./pages/search/search"
+import {NmlService} from "./services/nml.service";
 
 @Component({
   templateUrl: 'build/app.html'
 })
 class MyApp implements AfterViewInit {
   ngAfterViewInit(): any {
-    this.nav.setRoot(this.authService.isAuthenticated ? ListPage : LoginPage)
+    if (this.authService.isAuthenticated) {
+      this.nmlService.extendAuth()
+        .subscribe(() => this.nav.setRoot(ListPage), () => this.nav.setRoot(LoginPage))
+    } else {
+      this.nav.setRoot(LoginPage)
+    }
   }
 
   @ViewChild(Nav) nav: Nav
@@ -23,7 +29,8 @@ class MyApp implements AfterViewInit {
 
   constructor(private platform: Platform,
               private menu: MenuController,
-              private authService: AuthService) {
+              private authService: AuthService,
+              private nmlService: NmlService) {
     this.initializeApp()
 
     this.pages = [
@@ -47,7 +54,7 @@ class MyApp implements AfterViewInit {
   }
 
   isActive(pageType) {
-    if(!this.nav.getActive()) return false
+    if (!this.nav.getActive()) return false
     const {componentType} = this.nav.getActive()
     return componentType === pageType
   }
@@ -55,4 +62,4 @@ class MyApp implements AfterViewInit {
 
 let prodMode = window.hasOwnProperty('cordova');
 
-ionicBootstrap(MyApp, [HTTP_PROVIDERS, AuthService], {prodMode})
+ionicBootstrap(MyApp, [HTTP_PROVIDERS, AuthService, NmlService], {prodMode})
