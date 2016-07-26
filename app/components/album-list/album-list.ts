@@ -19,6 +19,6 @@ export class AlbumListComponent {
   }
 
   getAlbumThumbnailUrl(album: Album): string {
-    return this.nmlService.signResourceUrl(album.artwork, {w: 50, h: 50})
+    return this.nmlService.signResourceUrl(album.artwork, {w: 30, h: 30})
   }
 }

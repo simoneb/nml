@@ -22,7 +22,7 @@ export class ListPage implements OnInit {
   }
 
   private loadFirstPage() {
-    this.albums = this.nmlService.albums({P: 1, PP: 20})
+    this.albums = this.nmlService.albums({P: 1, PP: 10})
       .map(albums => albums.tracklists)
   }
 

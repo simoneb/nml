@@ -9,17 +9,19 @@
 
 <ion-content>
   <div *ngIf="album" class="selection">
-    <b>{{album.title}}</b>
+    <h3>{{album.title}}</h3>
     <img *ngIf="albumImageUrl" [src]="albumImageUrl" />
     <ion-item-group *ngFor="let group of trackGroups">
       <ion-item-divider light>{{group[0]}}</ion-item-divider>
-      <button ion-item
+      <button ion-item no-lines
               *ngFor="let track of group[1]"
               (click)="play(track)">
-        {{track.track}} - {{track.title}}
-        <div class="item-note" item-right>
-          {{track.duration}}
-        </div>
+        <ion-icon name="stats" *ngIf="playing(track) | async" item-left></ion-icon>
+        <h3>{{track.title}}</h3>
+        <p>{{track.duration}}</p>
+        <button item-right clear light (click)="showTrackOptions($event, track)">
+          <ion-icon name="more"></ion-icon>
+        </button>
       </button>
     </ion-item-group>
   </div>

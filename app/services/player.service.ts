@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core'
 import {PlayerQueue} from './player-queue'
-import {QueueItem} from '../models/nml'
+import {QueueItem, Track} from '../models/nml'
 import {NmlService} from './nml.service'
 import {BehaviorSubject} from 'rxjs'
 
