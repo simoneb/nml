@@ -4,8 +4,7 @@ import {NmlService} from '../../services/nml.service'
 import {ListPage} from '../list/list'
 
 @Component({
-  templateUrl: 'build/pages/login/login.html',
-  providers: [NmlService]
+  templateUrl: 'build/pages/login/login.html'
 })
 export class LoginPage {
   auth: {name: String, password: String};
@@ -16,7 +15,6 @@ export class LoginPage {
   }
 
   login(event) {
-    console.log('logging in')
     this.nmlService
       .login(this.auth.name, this.auth.password)
       .subscribe(() => this.navCtrl.setRoot(ListPage), err => {

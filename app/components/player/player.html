@@ -1,0 +1,17 @@
+<div class="player" *ngIf="currentItem | async" (click)="goToAlbum()">
+  <ion-toolbar>
+    <ion-buttons start class="album-image">
+      <img [src]="albumImageUrl | async" height="30" width="30" />
+    </ion-buttons>
+    <ion-title>{{(currentItem | async).track.title}}</ion-title>
+
+    <ion-buttons end>
+      <button *ngIf="!(currentlyPlaying | async)" (click)="play()">
+        <ion-icon name="play"></ion-icon>
+      </button>
+      <button *ngIf="(currentlyPlaying | async)" (click)="pause()">
+        <ion-icon name="pause"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-toolbar>
+</div>

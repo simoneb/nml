@@ -4,8 +4,6 @@ import {Observable}     from 'rxjs/Observable'
 import {AuthService} from './auth.service'
 import {HmacSHA1, enc} from 'crypto-js'
 import {Albums, Album, Resource} from '../models/nml'
-import {NavController} from "ionic-angular";
-import {LoginPage} from "../pages/login/login";
 
 function toJson(res: Response) {
   return res.json()
@@ -68,7 +66,7 @@ export class NmlService {
       .catch(this.handleError)
   }
 
-  search(term: string, query = {P: 1, PP: 20}): Observable<Albums> {
+  search(term: string, query = {P: 1, PP: 10}): Observable<Albums> {
     let resource = `/Search/Album/${term}`
     let headers = new Headers({'Accept': 'application/json'})
     let search = NmlService.createSearch(query)

@@ -8,7 +8,11 @@ import {HTTP_PROVIDERS} from '@angular/http'
 import './rxjs-operators'
 import {AuthService} from './services/auth.service'
 import {SearchPage} from "./pages/search/search"
-import {NmlService} from "./services/nml.service";
+import {NmlService} from "./services/nml.service"
+import {PlayerQueue} from "./services/player-queue";
+import {PlayerService} from "./services/player.service";
+
+const cordova = window.hasOwnProperty('cordova');
 
 @Component({
   templateUrl: 'build/app.html'
@@ -16,8 +20,13 @@ import {NmlService} from "./services/nml.service";
 class MyApp implements AfterViewInit {
   ngAfterViewInit(): any {
     if (this.authService.isAuthenticated) {
-      this.nmlService.extendAuth()
-        .subscribe(() => this.nav.setRoot(ListPage), () => this.nav.setRoot(LoginPage))
+      if (cordova) {
+        this.nmlService.extendAuth().subscribe(
+          () => this.nav.setRoot(SearchPage),
+          () => this.nav.setRoot(LoginPage))
+      } else {
+        this.nav.setRoot(SearchPage)
+      }
     } else {
       this.nav.setRoot(LoginPage)
     }
@@ -60,6 +69,12 @@ class MyApp implements AfterViewInit {
   }
 }
 
-let prodMode = window.hasOwnProperty('cordova');
 
-ionicBootstrap(MyApp, [HTTP_PROVIDERS, AuthService, NmlService], {prodMode})
+ionicBootstrap(MyApp, [
+    HTTP_PROVIDERS,
+    AuthService,
+    NmlService,
+    PlayerQueue,
+    PlayerService
+  ],
+  {prodMode: cordova})

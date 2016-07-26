@@ -5,8 +5,7 @@ import {Observable} from "rxjs";
 
 @Component({
   selector: 'album-list',
-  templateUrl: 'build/components/album-list/album-list.html',
-  providers: [NmlService]
+  templateUrl: 'build/components/album-list/album-list.html'
 })
 export class AlbumListComponent {
   @Input() albums: Observable<Array<Album>>

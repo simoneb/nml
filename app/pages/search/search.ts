@@ -3,18 +3,19 @@ import {NavController} from 'ionic-angular'
 import {AlbumDetailsPage} from '../album-details/album-details'
 import {NmlService} from '../../services/nml.service'
 import {Album} from "../../models/nml"
-import {AlbumListComponent} from "../../components/album-list/album-list"
-import {Observable} from "rxjs";
+import {AlbumListComponent} from '../../components/album-list/album-list'
+import {PlayerComponent} from '../../components/player/player'
+import {Observable} from 'rxjs'
 
 @Component({
   templateUrl: 'build/pages/search/search.html',
-  providers: [NmlService],
-  directives: [AlbumListComponent]
+  directives: [AlbumListComponent, PlayerComponent]
 })
 export class SearchPage {
   albums: Observable<Array<Album>>
 
-  constructor(private navCtrl: NavController, private nmlService: NmlService) {
+  constructor(private navCtrl: NavController,
+              private nmlService: NmlService) {
   }
 
   private search({target: {value}}) {

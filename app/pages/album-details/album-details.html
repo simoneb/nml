@@ -14,7 +14,6 @@
     <ion-item-group *ngFor="let group of trackGroups">
       <ion-item-divider light>{{group[0]}}</ion-item-divider>
       <button ion-item
-              [class.playing]="track === currentlyPlaying"
               *ngFor="let track of group[1]"
               (click)="play(track)">
         {{track.track}} - {{track.title}}
@@ -25,3 +24,7 @@
     </ion-item-group>
   </div>
 </ion-content>
+
+<ion-footer>
+  <player></player>
+</ion-footer>

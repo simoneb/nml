@@ -1,12 +1,16 @@
 <ion-header>
-  <ion-toolbar primary>
+  <ion-toolbar>
     <button menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
-    <ion-searchbar autocomplete="on" (ionInput)="search($event)"></ion-searchbar>
+    <ion-searchbar autocomplete="on" debounce="1000" (ionInput)="search($event)"></ion-searchbar>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
   <album-list [albums]="albums" (onAlbumSelected)="goToAlbum($event)"></album-list>
 </ion-content>
+
+<ion-footer>
+  <player></player>
+</ion-footer>

@@ -2,14 +2,14 @@ import {Component, OnInit} from '@angular/core'
 import {NavController} from 'ionic-angular'
 import {AlbumDetailsPage} from '../album-details/album-details'
 import {NmlService} from '../../services/nml.service'
-import {Album} from "../../models/nml"
-import {AlbumListComponent} from "../../components/album-list/album-list"
-import {Observable} from "rxjs";
+import {Album} from '../../models/nml'
+import {AlbumListComponent} from '../../components/album-list/album-list'
+import {Observable} from 'rxjs'
+import {PlayerComponent} from '../../components/player/player'
 
 @Component({
   templateUrl: 'build/pages/list/list.html',
-  providers: [NmlService],
-  directives: [AlbumListComponent]
+  directives: [AlbumListComponent, PlayerComponent]
 })
 export class ListPage implements OnInit {
   ngOnInit() {

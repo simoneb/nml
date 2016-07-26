@@ -51,3 +51,5 @@ export interface Playlists extends Resource {
 export interface Playlist extends Resource {
   name: string
 }
+
+export type QueueItem = {track: Track, album: Album}
