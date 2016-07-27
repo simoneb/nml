@@ -18,18 +18,8 @@ const cordova = window.hasOwnProperty('cordova');
   templateUrl: 'build/app.html'
 })
 class MyApp implements AfterViewInit {
-  ngAfterViewInit(): any {
-    if (this.authService.isAuthenticated) {
-      if (cordova) {
-        this.nmlService.extendAuth().subscribe(
-          () => this.nav.setRoot(SearchPage),
-          () => this.nav.setRoot(LoginPage))
-      } else {
-        this.nav.setRoot(SearchPage)
-      }
-    } else {
-      this.nav.setRoot(LoginPage)
-    }
+  ngAfterViewInit() {
+    this.nav.setRoot(this.authService.isAuthenticated ? ListPage : LoginPage)
   }
 
   @ViewChild(Nav) nav: Nav

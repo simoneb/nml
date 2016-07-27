@@ -54,6 +54,26 @@ export class NmlService {
   }
 
   albums(query): Observable<Albums> {
+    return this.tryExtendingAuth(() => this._albums(query))
+      .map(toJson)
+      .catch(this.handleError)
+  }
+
+  private tryExtendingAuth<T>(makeRequest: () => Observable<T>) {
+    const request = Observable.create(observer => makeRequest().subscribe(
+      observer.next.bind(observer),
+      observer.error.bind(observer),
+      observer.complete.bind(observer))
+    )
+
+    return request.retryWhen(errors => errors.flatMap(res => {
+      if (res.status === 401) {
+        return this.extendAuth()
+      }
+    }))
+  }
+
+  private _albums(query): Observable<Response> {
     let resource = '/Album/'
     let headers = new Headers({'Accept': 'application/json'})
     let search = NmlService.createSearch(query)
@@ -62,8 +82,6 @@ export class NmlService {
 
     return this.http
       .get(this.baseUrl + resource, this.sign(resource, options))
-      .map(toJson)
-      .catch(this.handleError)
   }
 
   search(term: string, query = {P: 1, PP: 10}): Observable<Albums> {
